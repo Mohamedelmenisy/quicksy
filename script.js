@@ -4,301 +4,212 @@ document.addEventListener('DOMContentLoaded', () => {
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlhemdxa2hpdWRmaW94c2t2anZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIxNTE2NjcsImV4cCI6MjA2NzcyNzY2N30.9R3jaGdI-bO-AejUSgWI5LnYa2VMmUFa2TKy8AmdfM4';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // --- Helper function to display messages ---
+    // --- UTILITY FUNCTIONS ---
     const showMessage = (elementId, message, isSuccess = false) => {
-        const messageDiv = document.getElementById(elementId);
-        if (messageDiv) {
-            messageDiv.textContent = message;
-            messageDiv.classList.remove('hidden', 'success');
-            if (isSuccess) {
-                messageDiv.classList.add('success');
-            }
+        const el = document.getElementById(elementId);
+        if (el) {
+            el.textContent = message;
+            el.classList.remove('hidden');
+            el.classList.toggle('success', isSuccess);
         }
     };
 
-    // --- Signup Page Logic ---
-    const signupForm = document.getElementById('signup-form');
-    if (signupForm) {
-        signupForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitButton = signupForm.querySelector('button[type="submit"]');
-            const fullName = document.getElementById('full-name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        window.location.href = 'index.html';
+    };
 
-            if (password !== confirmPassword) {
-                showMessage('signup-message', 'Passwords do not match!');
-                return;
+    const checkUser = async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+            const publicPages = ['/', '/index.html', '/login.html', '/signup.html'];
+            if (!publicPages.includes(window.location.pathname)) {
+                window.location.href = 'login.html';
             }
-            if (password.length < 6) {
-                showMessage('signup-message', 'Password must be at least 6 characters long.');
-                return;
-            }
+            return null;
+        }
+        return session.user;
+    };
+    
+    // --- AUTH MODULE ---
+    const initAuth = () => {
+        const signupForm = document.getElementById('signup-form');
+        if (signupForm) {
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = e.target.querySelector('button');
+                btn.disabled = true;
+                btn.textContent = 'Creating...';
+                
+                const fullName = document.getElementById('full-name').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
 
-            submitButton.disabled = true;
-            submitButton.textContent = 'Creating Account...';
+                if (password !== confirmPassword) {
+                    showMessage('signup-message', 'Passwords do not match!');
+                    btn.disabled = false;
+                    btn.textContent = 'Create My Account';
+                    return;
+                }
 
-            const { data, error } = await supabase.auth.signUp({
-                email,
-                password,
-                options: {
-                    data: { full_name: fullName }
+                const { data, error } = await supabase.auth.signUp({
+                    email, password, options: { data: { full_name: fullName, new_user: true } }
+                });
+                
+                if (error) {
+                    showMessage('signup-message', error.message);
+                } else {
+                    showMessage('signup-message', 'Success! Check your email for verification.', true);
+                }
+                btn.disabled = false;
+                btn.textContent = 'Create My Account';
+            });
+        }
+
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = e.target.querySelector('button');
+                btn.disabled = true;
+                btn.textContent = 'Logging in...';
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                const { error } = await supabase.auth.signInWithPassword({ email, password });
+                
+                if (error) {
+                    showMessage('login-message', error.message);
+                    btn.disabled = false;
+                    btn.textContent = 'Login';
+                } else {
+                    window.location.href = 'app.html';
                 }
             });
+        }
+    };
 
-            submitButton.disabled = false;
-            submitButton.textContent = 'Create Account';
-
-            if (error) {
-                showMessage('signup-message', `Error: ${error.message}`);
-            } else if (data.user && data.user.identities.length === 0) {
-                 showMessage('signup-message', 'Error: A user with this email already exists.');
-            }
-            else {
-                showMessage('signup-message', 'Success! Please check your email to verify your account.', true);
-                signupForm.reset();
-            }
-        });
-    }
-
-    // --- Login Page Logic ---
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitButton = loginForm.querySelector('button[type="submit"]');
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            submitButton.disabled = true;
-            submitButton.textContent = 'Logging in...';
-
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
-            
-            if (error) {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Login';
-                showMessage('login-message', `Error: ${error.message}`);
-            } else {
-                window.location.href = 'dashboard.html';
-            }
-        });
-    }
-
-    // --- Landing Page Logic (FAQ) ---
-    const faqItems = document.querySelectorAll('.faq-item');
-    if (faqItems) {
-        faqItems.forEach(item => {
-            const question = item.querySelector('.faq-question');
-            question.addEventListener('click', () => {
-                const isActive = item.classList.contains('active');
-                faqItems.forEach(i => i.classList.remove('active'));
-                if (!isActive) {
-                    item.classList.add('active');
-                }
-            });
-        });
-    }
-
-    // =================================================================
-    // ==========            DASHBOARD LOGIC                 ===========
-    // =================================================================
-    if (document.body.classList.contains('dashboard-body')) {
-
-        const state = {
-            user: null,
-            profile: null,
-            pages: [],
-            orders: [],
-            customers: []
-        };
+    // --- APP (USER WORKSPACE) MODULE ---
+    const initApp = async () => {
+        const user = await checkUser();
+        if (!user) return;
 
         const UI = {
             welcomeMessage: document.getElementById('welcome-message'),
+            userEmailDisplay: document.getElementById('user-email-display'),
             logoutButton: document.getElementById('logout-button'),
-            navLinks: document.querySelectorAll('.sidebar-nav .nav-link'),
-            contentPanels: document.querySelectorAll('.content-panel'),
-            // Panels
-            pagesContainer: document.getElementById('pages-container'),
-            ordersContainer: document.getElementById('orders-container'),
-            customersContainer: document.getElementById('customers-container'),
-            // Buttons
-            createNewPageBtn: document.getElementById('create-new-page-btn'),
-            // Forms
-            settingsForm: document.getElementById('settings-form'),
-            settingsFullName: document.getElementById('settings-full-name'),
-            settingsEmail: document.getElementById('settings-email'),
+            myPagesList: document.getElementById('my-pages-list'),
+            recentOrdersList: document.getElementById('recent-orders-list'),
+            onboardingModal: document.getElementById('onboarding-modal'),
+            onboardingStep1: document.getElementById('onboarding-step-1'),
+            onboardingStep2: document.getElementById('onboarding-step-2'),
+            onboardingNextBtn: document.getElementById('onboarding-next-btn'),
+            onboardingFinishBtn: document.getElementById('onboarding-finish-btn'),
         };
 
-        // --- RENDER FUNCTIONS (Update the UI) ---
-        
-        const renderPages = () => {
-            if (!state.pages || state.pages.length === 0) {
-                UI.pagesContainer.innerHTML = `
-                    <div class="card empty-state-card">
-                        <p>You haven't created any pages yet. Let's get started!</p>
-                        <p>Click the "Create New Page" button above to begin.</p>
-                    </div>`;
-                return;
-            }
-
-            UI.pagesContainer.innerHTML = '<div class="pages-grid"></div>';
-            const grid = UI.pagesContainer.querySelector('.pages-grid');
-            state.pages.forEach(page => {
-                grid.innerHTML += `
-                    <div class="card page-card">
-                        <div class="page-card-header">
-                            <h4>${page.title}</h4>
-                            <p>URL: <a href="/${page.slug}" target="_blank">/${page.slug}</a></p>
-                        </div>
-                        <div class="page-card-stats">
-                            <span>0</span> Views | <span>0</span> Orders
-                        </div>
-                        <div class="page-card-actions">
-                            <a href="#" class="btn btn-secondary">Edit</a>
-                            <a href="#" class="btn btn-ghost">Analytics</a>
-                        </div>
-                    </div>`;
-            });
+        const state = {
+            pageTitle: '',
+            serviceName: '',
+            servicePrice: 0
         };
 
-        const renderOrders = () => {
-             if (!state.orders || state.orders.length === 0) {
-                 UI.ordersContainer.innerHTML = `<table><thead><tr><th>Customer</th><th>Date</th><th>Status</th><th>Amount</th><th>Actions</th></tr></thead><tbody><tr><td colspan="5">No orders found.</td></tr></tbody></table>`;
-                 return;
-            }
-            let tableHTML = `
-                <table>
-                    <thead><tr><th>Customer</th><th>Date</th><th>Status</th><th>Amount</th><th>Actions</th></tr></thead>
-                    <tbody>`;
-            state.orders.forEach(order => {
-                tableHTML += `
-                    <tr>
-                        <td>${order.customer_name || 'N/A'}</td>
-                        <td>${new Date(order.created_at).toLocaleDateString()}</td>
-                        <td><span class="status ${order.status || 'processing'}">${order.status || 'processing'}</span></td>
-                        <td>$${(order.amount || 0).toFixed(2)}</td>
-                        <td><a href="#" class="action-link">View</a></td>
-                    </tr>`;
-            });
-            tableHTML += `</tbody></table>`;
-            UI.ordersContainer.innerHTML = tableHTML;
-        };
-        
-        const renderSettings = () => {
-            if(state.profile) UI.settingsFullName.value = state.profile.full_name;
-            if(state.user) UI.settingsEmail.value = state.user.email;
-        }
-
-        const initializeSalesChart = () => { /* ... (same as before) ... */ };
-
-        // --- DATA FETCHING FUNCTIONS (Get data from Supabase) ---
-        const fetchUserData = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                window.location.href = 'login.html';
-                return;
-            }
-            state.user = user;
-            
-            const { data: profile, error } = await supabase.from('profiles').select('full_name').eq('id', user.id).single();
-            if (profile) state.profile = profile;
-        };
-
-        const fetchPages = async () => {
-            UI.pagesContainer.innerHTML = '<div class="loader">Loading your pages...</div>';
-            const { data, error } = await supabase.from('pages').select('*').eq('user_id', state.user.id);
-            if (!error) {
-                state.pages = data;
-                renderPages();
-            }
-        };
-
-        const fetchOrders = async () => {
-            UI.ordersContainer.innerHTML = '<div class="loader">Loading your orders...</div>';
-            // First, get all page IDs for the current user
-            const { data: pages, error: pagesError } = await supabase.from('pages').select('id').eq('user_id', state.user.id);
-            if (pagesError || !pages || pages.length === 0) {
-                 state.orders = [];
-                 renderOrders();
-                 return;
-            }
-            const pageIds = pages.map(p => p.id);
-            const { data: orders, error: ordersError } = await supabase.from('orders').select('*').in('page_id', pageIds);
-            if (!ordersError) {
-                state.orders = orders;
-                renderOrders();
-            }
-        };
-
-        // --- EVENT HANDLERS & INITIALIZATION ---
-        const handleCreatePage = async (e) => {
-            e.preventDefault();
-            const pageTitle = prompt("Enter a title for your new page (e.g., 'My Cake Shop'):");
-            if (!pageTitle) return;
-
-            const defaultSlug = pageTitle.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-            const pageSlug = prompt("Enter a unique URL for your page (e.g., my-cake-shop):", defaultSlug);
-            if (!pageSlug) return;
-            
-            const { error } = await supabase.from('pages').insert([{ 
-                title: pageTitle, 
-                slug: pageSlug, 
-                user_id: state.user.id 
-            }]);
-            
-            if (error) {
-                alert(`Error creating page: ${error.message}`);
-            } else {
-                alert('Page created successfully!');
-                fetchPages(); // Refresh the pages list
-            }
-        };
-
-        const handleTabSwitch = (e) => {
-            e.preventDefault();
-            const link = e.currentTarget;
-            UI.navLinks.forEach(l => l.classList.remove('active'));
-            UI.contentPanels.forEach(p => p.classList.remove('active'));
-
-            link.classList.add('active');
-            const targetPanelId = link.getAttribute('data-target');
-            const targetPanel = document.getElementById(targetPanelId);
-            targetPanel.classList.add('active');
-
-            // Load data for the selected panel
-            switch (targetPanelId) {
-                case 'panel-pages': fetchPages(); break;
-                case 'panel-orders': fetchOrders(); break;
-                case 'panel-customers': /* fetchCustomers(); */ break;
-                case 'panel-settings': renderSettings(); break;
-                case 'panel-dashboard': initializeSalesChart(); break;
-            }
-        };
-        
-        const handleLogout = async (e) => {
-            e.preventDefault();
-            await supabase.auth.signOut();
-            window.location.href = 'index.html';
-        };
-
-        const init = async () => {
-            await fetchUserData();
-
-            if (state.user) {
-                UI.welcomeMessage.textContent = `Welcome back, ${state.profile?.full_name || state.user.email}!`;
-                UI.logoutButton.addEventListener('click', handleLogout);
-                UI.navLinks.forEach(link => link.addEventListener('click', handleTabSwitch));
-                UI.createNewPageBtn.addEventListener('click', handleCreatePage);
+        // Onboarding Logic
+        const handleOnboarding = async () => {
+            if (user.user_metadata.new_user) {
+                UI.onboardingModal.classList.remove('hidden');
                 
-                // Initialize the dashboard view
-                initializeSalesChart();
-                // Pre-load data for the first active panel if needed, or wait for tab click.
-                // For now, it loads when tab is clicked.
+                UI.onboardingNextBtn.addEventListener('click', () => {
+                    state.pageTitle = document.getElementById('onboarding-page-title').value;
+                    if (state.pageTitle.trim() === '') {
+                        alert('Please enter a page title.');
+                        return;
+                    }
+                    UI.onboardingStep1.classList.add('hidden');
+                    UI.onboardingStep2.classList.remove('hidden');
+                });
+
+                UI.onboardingFinishBtn.addEventListener('click', async () => {
+                    state.serviceName = document.getElementById('onboarding-service-name').value;
+                    state.servicePrice = document.getElementById('onboarding-service-price').value;
+
+                    if (state.serviceName.trim() === '') {
+                        alert('Please enter a service name.');
+                        return;
+                    }
+
+                    // 1. Create the page
+                    const { data: pageData, error: pageError } = await supabase
+                        .from('pages')
+                        .insert({ title: state.pageTitle, user_id: user.id })
+                        .select()
+                        .single();
+
+                    if (pageError) {
+                        alert('Error creating page: ' + pageError.message);
+                        return;
+                    }
+
+                    // 2. TODO: Create the product/service block for that page
+                    // This will be implemented with the page editor logic
+
+                    // 3. Close modal and update user metadata
+                    UI.onboardingModal.classList.add('hidden');
+                    await supabase.auth.updateUser({ data: { new_user: false } });
+                    
+                    // 4. Refresh page list
+                    loadMyPages();
+                });
             }
         };
 
-        init();
+        const loadMyPages = async () => {
+            UI.myPagesList.innerHTML = '<div class="loader">Loading...</div>';
+            const { data, error } = await supabase.from('pages').select('id, title').eq('user_id', user.id);
+
+            if (error || !data || data.length === 0) {
+                UI.myPagesList.innerHTML = '<div class="list-item"><span class="list-item-sub">No pages yet. Create one!</span></div>';
+            } else {
+                UI.myPagesList.innerHTML = data.map(page => `
+                    <div class="list-item">
+                        <span class="list-item-main">${page.title}</span>
+                        <a href="editor.html?id=${page.id}" class="btn btn-secondary btn-sm">Edit</a>
+                    </div>
+                `).join('');
+            }
+        };
+
+        const loadRecentOrders = async () => {
+            // Placeholder for now
+            UI.recentOrdersList.innerHTML = '<div class="list-item"><span class="list-item-sub">No recent orders.</span></div>';
+        };
+
+        UI.welcomeMessage.textContent = `Welcome, ${user.user_metadata.full_name || user.email}!`;
+        UI.userEmailDisplay.textContent = user.email;
+        UI.logoutButton.addEventListener('click', handleLogout);
+
+        loadMyPages();
+        loadRecentOrders();
+        handleOnboarding();
+    };
+
+    // --- EDITOR MODULE ---
+    const initEditor = async () => {
+        const user = await checkUser();
+        if (!user) return;
+        // Basic editor logic can go here
+        console.log("Editor Initialized");
+    };
+
+
+    // --- ROUTER ---
+    const path = window.location.pathname;
+    if (path.endsWith('/') || path.endsWith('index.html') || path.endsWith('login.html') || path.endsWith('signup.html')) {
+        initAuth();
+    } else if (path.endsWith('app.html')) {
+        initApp();
+    } else if (path.endsWith('editor.html')) {
+        initEditor();
     }
 });
