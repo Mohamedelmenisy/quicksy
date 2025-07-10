@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 setTimeout(() => {
                     window.location.href = 'login.html';
-                }, 2000); // Wait 2 seconds before redirecting
+                }, 2000);
             }
         });
     }
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
-                }, 2000); // Wait 2 seconds before redirecting
+                }, 2000);
             }
         });
     }
@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 link.classList.add('active');
 
                 contentPanels.forEach(panel => {
+                    panel.style.display = panel.id === targetId ? 'block' : 'none';
                     if (panel.id === targetId) {
                         panel.classList.add('active');
                     } else {
@@ -58,12 +59,37 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+    
+    // --- Dashboard Chart ---
+    const salesChartCanvas = document.getElementById('salesChart');
+    if (salesChartCanvas) {
+        new Chart(salesChartCanvas, {
+            type: 'line',
+            data: {
+                labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
+                datasets: [{
+                    label: 'Sales',
+                    data: [120, 190, 300, 500, 230, 310, 450],
+                    borderColor: '#9333EA',
+                    backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
 
     // --- Landing Page Demo Form Logic ---
     const demoForm = document.getElementById('demo-form');
     if (demoForm) {
         const successMessage = document.getElementById('success-message');
-        const formContainer = demoForm.parentElement;
         
         demoForm.addEventListener('submit', (e) => {
             e.preventDefault();
