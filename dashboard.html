@@ -9,8 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Chart.js library for real charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="dashboard-body">
 
@@ -47,8 +47,8 @@
         <!-- Main Content Area -->
         <div class="main-content">
             <header class="main-header">
-                <h2>Welcome back, Mohamed!</h2>
-                <a href="index.html" class="btn btn-ghost">Logout</a>
+                <h2 id="welcome-message">Welcome back!</h2>
+                <a href="#" id="logout-button" class="btn btn-ghost">Logout</a>
             </header>
 
             <!-- Dashboard Panel -->
@@ -84,13 +84,7 @@
             <div id="panel-orders" class="content-panel">
                 <h3>Manage Orders</h3>
                 <div class="card table-card">
-                    <table>
-                        <thead><tr><th>Customer</th><th>Date</th><th>Status</th><th>Amount</th><th>Actions</th></tr></thead>
-                        <tbody>
-                            <tr><td>Ahmed Ali</td><td>July 10, 2025</td><td><span class="status shipped">Shipped</span></td><td>$45.00</td><td><a href="#" class="action-link">View</a></td></tr>
-                            <tr><td>Sara Ibrahim</td><td>July 9, 2025</td><td><span class="status processing">Processing</span></td><td>$120.50</td><td><a href="#" class="action-link">View</a></td></tr>
-                        </tbody>
-                    </table>
+                    <!-- Orders will be loaded here dynamically -->
                 </div>
             </div>
 
@@ -98,23 +92,14 @@
             <div id="panel-customers" class="content-panel">
                  <h3>Manage Customers</h3>
                 <div class="card table-card">
-                    <table>
-                        <thead><tr><th>Name</th><th>Email</th><th>Joined Date</th><th>Total Spent</th></tr></thead>
-                        <tbody>
-                            <tr><td>Ahmed Ali</td><td>ahmed@email.com</td><td>July 10, 2025</td><td>$45.00</td></tr>
-                            <tr><td>Sara Ibrahim</td><td>sara@email.com</td><td>July 9, 2025</td><td>$120.50</td></tr>
-                        </tbody>
-                    </table>
+                    <!-- Customer data will be loaded here -->
                 </div>
             </div>
             
              <!-- Pages Panel -->
             <div id="panel-pages" class="content-panel">
                 <h3>Your Quicksy Pages</h3>
-                <div class="card empty-state-card">
-                    <p>You haven't created any pages yet. Let's get started!</p>
-                    <a href="#" class="btn btn-primary">+ Create New Page</a>
-                </div>
+                <!-- Pages will be loaded here dynamically -->
             </div>
             
              <!-- Settings Panel -->
