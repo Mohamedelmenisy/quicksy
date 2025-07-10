@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Workspace - Quicksy</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,...">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="app-body">
+
+    <div class="app-layout">
+        <!-- Main App Header -->
+        <header class="app-header">
+            <a href="app.html" class="logo">Quicksy</a>
+            <div class="user-menu">
+                <span id="user-email-display"></span>
+                <a href="#" id="logout-button" class="btn btn-ghost">Logout</a>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main-content">
+            <div id="app-dashboard">
+                <!-- Module: Welcome Message -->
+                <div class="welcome-banner">
+                    <h1 id="welcome-message">Welcome back!</h1>
+                    <p>Here's everything you need to get started and grow your business.</p>
+                </div>
+
+                <!-- App Grid Layout -->
+                <div class="app-grid">
+                    <!-- Column 1: Core Actions & Pages -->
+                    <div class="app-grid-main">
+                        <!-- Module: Quick Actions -->
+                        <div class="module-card">
+                            <h3>Quick Actions</h3>
+                            <div class="quick-actions-container">
+                                <a href="#" class="action-box">
+                                    <div class="action-icon">🚀</div>
+                                    <h4>Create New Page</h4>
+                                    <p>Start a new order or booking page.</p>
+                                </a>
+                                <a href="#" class="action-box">
+                                    <div class="action-icon">📊</div>
+                                    <h4>View Analytics</h4>
+                                    <p>Check your views and conversions.</p>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Module: My Pages -->
+                        <div class="module-card">
+                            <h3>My Pages</h3>
+                            <div id="my-pages-list" class="list-container">
+                                <!-- Pages will be loaded here by JS -->
+                                <div class="loader">Loading your pages...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Sidebar / Secondary Info -->
+                    <div class="app-grid-sidebar">
+                        <!-- Module: Communication Preferences -->
+                        <div class="module-card">
+                            <h3>Communication</h3>
+                            <p class="module-subtitle">How can we best reach you with tips & updates?</p>
+                            <div class="comm-prefs">
+                                <button class="comm-btn" data-method="whatsapp">
+                                    <svg viewBox="0 0 24 24"><path fill="currentColor" d="..."></path></svg> WhatsApp
+                                </button>
+                                <button class="comm-btn active" data-method="email">
+                                     <svg viewBox="0 0 24 24"><path fill="currentColor" d="..."></path></svg> Email
+                                </button>
+                            </div>
+                            <p class="comm-note">We'll only send you stuff that helps you grow.</p>
+                        </div>
+                        
+                        <!-- Module: Recent Orders -->
+                        <div class="module-card">
+                            <h3>Recent Orders</h3>
+                            <div id="recent-orders-list" class="list-container">
+                                <!-- Orders will be loaded here by JS -->
+                                <div class="loader">Loading recent orders...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
