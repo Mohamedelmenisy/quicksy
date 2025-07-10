@@ -1,21 +1,32 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Demo Form Logic
     const demoForm = document.getElementById('demo-form');
     const successMessage = document.getElementById('success-message');
 
     if (demoForm) {
         demoForm.addEventListener('submit', (e) => {
-            e.preventDefault(); // يمنع إرسال الفورم
-
-            // إخفاء الفورم وإظهار رسالة النجاح
-            demoForm.classList.add('hidden');
+            e.preventDefault();
+            demoForm.style.display = 'none';
             successMessage.classList.remove('hidden');
 
-            // إعادة الفورم بعد 5 ثواني
             setTimeout(() => {
-                demoForm.classList.remove('hidden');
+                demoForm.style.display = 'block';
                 successMessage.classList.add('hidden');
-                demoForm.reset(); // تفريغ حقول الفورم
+                demoForm.reset();
             }, 5000);
         });
     }
+
+    // FAQ Accordion Logic
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        question.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+            faqItems.forEach(i => i.classList.remove('active'));
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        });
+    });
 });
