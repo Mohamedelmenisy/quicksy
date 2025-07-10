@@ -1,121 +1,103 @@
-document.addEventListener('DOMContentLoaded', () => {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quicksy - Your Smart Order Page</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
 
-    // --- Signup Form Logic ---
-    const signupForm = document.getElementById('signup-form');
-    if (signupForm) {
-        signupForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const messageDiv = document.getElementById('signup-message');
-            if (messageDiv) {
-                messageDiv.textContent = '✓ Account created successfully! Redirecting...';
-                messageDiv.className = 'form-message success';
-                
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 2000);
-            }
-        });
-    }
+    <header class="navbar">
+        <div class="container">
+            <a href="#" class="logo">Quicksy</a>
+            <nav>
+                <a href="#pricing">Pricing</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-ghost">Login</a>
+                <a href="signup.html" class="btn btn-primary">Sign Up</a>
+            </div>
+        </div>
+    </header>
 
-    // --- Login Form Logic ---
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const messageDiv = document.getElementById('login-message');
-            if (messageDiv) {
-                messageDiv.textContent = '✓ Login successful! Welcome back.';
-                messageDiv.className = 'form-message success';
-                
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 2000);
-            }
-        });
-    }
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Create your smart order page. <span class="gradient-text">In seconds.</span></h1>
+                <p>Quicksy empowers you to receive customer orders and bookings online through a single, elegant, and fast page, without any technical hassle.</p>
+                <div class="hero-buttons">
+                    <a href="signup.html" class="btn btn-primary">🚀 Create Your Page for Free</a>
+                    <a href="#" class="btn btn-secondary">See a Live Demo</a>
+                </div>
+                <img src="https://i.imgur.com/zYf2b9W.png" alt="Phone Mockup" class="hero-mockup">
+            </div>
+        </section>
 
-    // --- Dynamic Dashboard Logic ---
-    const navLinks = document.querySelectorAll('.nav-link');
-    const contentPanels = document.querySelectorAll('.content-panel');
+        <section id="features" class="features">
+            <div class="container">
+                <h2>How It Works</h2>
+                <div class="features-grid">
+                    <div class="card">
+                        <h3>1. Design Your Page</h3>
+                        <p>Easily add your logo, services, and prices.</p>
+                    </div>
+                    <div class="card">
+                        <h3>2. Share Your Link</h3>
+                        <p>Get a unique link and share it on WhatsApp, Instagram, anywhere.</p>
+                    </div>
+                    <div class="card">
+                        <h3>3. Receive Your Orders</h3>
+                        <p>Get instant notifications for new orders with all client details.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    if (navLinks.length > 0 && contentPanels.length > 0) {
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                const targetId = link.getAttribute('data-target');
-                
-                navLinks.forEach(navLink => navLink.classList.remove('active'));
-                link.classList.add('active');
+        <section id="demo" class="interactive-demo">
+            <div class="container">
+                <h2>Try the Live Interactive Demo</h2>
+                <div class="card demo-form-card">
+                    <h3>Request a Logo Design</h3>
+                    <form id="demo-form">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="whatsapp">WhatsApp Number</label>
+                            <input type="tel" id="whatsapp" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="package">Choose a Package</label>
+                            <select id="package" required>
+                                <option>Basic Package</option>
+                                <option>Pro Package</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary full-width">Order Now</button>
+                    </form>
+                    <div id="success-message" class="success-message hidden">
+                        <h4>Awesome!</h4>
+                        <p>This is how your customer gets their order confirmation. Ready to build your own page?</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-                contentPanels.forEach(panel => {
-                    panel.style.display = panel.id === targetId ? 'block' : 'none';
-                    if (panel.id === targetId) {
-                        panel.classList.add('active');
-                    } else {
-                        panel.classList.remove('active');
-                    }
-                });
-            });
-        });
-    }
-    
-    // --- Dashboard Chart ---
-    const salesChartCanvas = document.getElementById('salesChart');
-    if (salesChartCanvas) {
-        new Chart(salesChartCanvas, {
-            type: 'line',
-            data: {
-                labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
-                datasets: [{
-                    label: 'Sales',
-                    data: [120, 190, 300, 500, 230, 310, 450],
-                    borderColor: '#9333EA',
-                    backgroundColor: 'rgba(147, 51, 234, 0.1)',
-                    fill: true,
-                    tension: 0.4,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true }
-                }
-            }
-        });
-    }
+    </main>
 
-    // --- Landing Page Demo Form Logic ---
-    const demoForm = document.getElementById('demo-form');
-    if (demoForm) {
-        const successMessage = document.getElementById('success-message');
-        
-        demoForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            demoForm.classList.add('hidden');
-            successMessage.classList.remove('hidden');
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 Quicksy. All Rights Reserved.</p>
+        </div>
+    </footer>
 
-            setTimeout(() => {
-                demoForm.classList.remove('hidden');
-                successMessage.classList.add('hidden');
-                demoForm.reset();
-            }, 4000);
-        });
-    }
-
-    // --- Landing Page FAQ Accordion Logic ---
-    const faqItems = document.querySelectorAll('.faq-item');
-    if(faqItems.length > 0) {
-        faqItems.forEach(item => {
-            const question = item.querySelector('.faq-question');
-            question.addEventListener('click', () => {
-                const isActive = item.classList.contains('active');
-                faqItems.forEach(i => i.classList.remove('active'));
-                if (!isActive) {
-                    item.classList.add('active');
-                }
-            });
-        });
-    }
-});
+    <script src="script.js"></script>
+</body>
+</html>
