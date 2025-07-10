@@ -19,11 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'index.html';
     };
 
-    const checkUser = async () => {
+    const checkUserSession = async () => {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
-            const publicPages = ['/', '/index.html', '/login.html', '/signup.html'];
-            if (!publicPages.includes(window.location.pathname)) {
+            const isPublicPage = ['/', '/index.html', '/login.html', '/signup.html'].some(p => window.location.pathname.endsWith(p));
+            if (!isPublicPage) {
                 window.location.href = 'login.html';
             }
             return null;
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     // --- AUTH MODULE ---
-    const initAuth = () => {
+    const initAuthPages = () => {
         const signupForm = document.getElementById('signup-form');
         if (signupForm) {
             signupForm.addEventListener('submit', async (e) => {
@@ -59,6 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (error) {
                     showMessage('signup-message', error.message);
+                } else if (data.user && data.user.identities && data.user.identities.length === 0){
+                    showMessage('signup-message', 'A user with this email already exists.');
                 } else {
                     showMessage('signup-message', 'Success! Check your email for verification.', true);
                 }
@@ -92,8 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- APP (USER WORKSPACE) MODULE ---
-    const initApp = async () => {
-        const user = await checkUser();
+    const initAppWorkspace = async () => {
+        const user = await checkUserSession();
         if (!user) return;
 
         const UI = {
@@ -109,13 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
             onboardingFinishBtn: document.getElementById('onboarding-finish-btn'),
         };
 
-        const state = {
-            pageTitle: '',
-            serviceName: '',
-            servicePrice: 0
-        };
+        const state = {};
 
-        // Onboarding Logic
         const handleOnboarding = async () => {
             if (user.user_metadata.new_user) {
                 UI.onboardingModal.classList.remove('hidden');
@@ -131,35 +128,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 UI.onboardingFinishBtn.addEventListener('click', async () => {
+                    UI.onboardingFinishBtn.disabled = true;
+                    UI.onboardingFinishBtn.textContent = 'Creating...';
+
                     state.serviceName = document.getElementById('onboarding-service-name').value;
                     state.servicePrice = document.getElementById('onboarding-service-price').value;
 
                     if (state.serviceName.trim() === '') {
                         alert('Please enter a service name.');
+                        UI.onboardingFinishBtn.disabled = false;
+                        UI.onboardingFinishBtn.textContent = 'Create My Page!';
                         return;
                     }
 
-                    // 1. Create the page
-                    const { data: pageData, error: pageError } = await supabase
+                    const { error: pageError } = await supabase
                         .from('pages')
-                        .insert({ title: state.pageTitle, user_id: user.id })
-                        .select()
-                        .single();
+                        .insert({ title: state.pageTitle, user_id: user.id });
 
                     if (pageError) {
                         alert('Error creating page: ' + pageError.message);
-                        return;
+                    } else {
+                        await supabase.auth.updateUser({ data: { new_user: false } });
+                        UI.onboardingModal.classList.add('hidden');
+                        loadMyPages();
                     }
-
-                    // 2. TODO: Create the product/service block for that page
-                    // This will be implemented with the page editor logic
-
-                    // 3. Close modal and update user metadata
-                    UI.onboardingModal.classList.add('hidden');
-                    await supabase.auth.updateUser({ data: { new_user: false } });
-                    
-                    // 4. Refresh page list
-                    loadMyPages();
+                    UI.onboardingFinishBtn.disabled = false;
+                    UI.onboardingFinishBtn.textContent = 'Create My Page!';
                 });
             }
         };
@@ -179,37 +173,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 `).join('');
             }
         };
-
-        const loadRecentOrders = async () => {
-            // Placeholder for now
-            UI.recentOrdersList.innerHTML = '<div class="list-item"><span class="list-item-sub">No recent orders.</span></div>';
-        };
-
+        
         UI.welcomeMessage.textContent = `Welcome, ${user.user_metadata.full_name || user.email}!`;
         UI.userEmailDisplay.textContent = user.email;
         UI.logoutButton.addEventListener('click', handleLogout);
 
         loadMyPages();
-        loadRecentOrders();
+        UI.recentOrdersList.innerHTML = '<div class="list-item"><span class="list-item-sub">No recent orders.</span></div>'; // Placeholder
         handleOnboarding();
     };
 
     // --- EDITOR MODULE ---
-    const initEditor = async () => {
-        const user = await checkUser();
+    const initPageEditor = async () => {
+        const user = await checkUserSession();
         if (!user) return;
-        // Basic editor logic can go here
         console.log("Editor Initialized");
     };
 
-
-    // --- ROUTER ---
+    // --- SIMPLE ROUTER ---
     const path = window.location.pathname;
-    if (path.endsWith('/') || path.endsWith('index.html') || path.endsWith('login.html') || path.endsWith('signup.html')) {
-        initAuth();
-    } else if (path.endsWith('app.html')) {
-        initApp();
-    } else if (path.endsWith('editor.html')) {
-        initEditor();
+    const isAuthPage = ['/login.html', '/signup.html'].some(p => path.endsWith(p));
+    const isAppPage = path.endsWith('/app.html');
+    const isEditorPage = path.endsWith('/editor.html');
+
+    if (isAuthPage) {
+        initAuthPages();
+    } else if (isAppPage) {
+        initAppWorkspace();
+    } else if (isEditorPage) {
+        initPageEditor();
+    } else { // Landing page
+        initAuthPages(); // It has no forms, but might have other logic later
     }
 });
