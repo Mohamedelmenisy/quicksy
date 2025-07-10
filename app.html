@@ -13,8 +13,36 @@
 </head>
 <body class="app-body">
 
+    <!-- Onboarding Modal (Hidden by default) -->
+    <div id="onboarding-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div id="onboarding-step-1">
+                <h2>Welcome to Quicksy! 🎉</h2>
+                <p>Let's create your first page in 60 seconds.</p>
+                <div class="form-group">
+                    <label for="onboarding-page-title">What's the name of your business or page?</label>
+                    <input type="text" id="onboarding-page-title" placeholder="e.g., Sarah's Cake Shop">
+                </div>
+                <button id="onboarding-next-btn" class="btn btn-primary full-width">Next</button>
+            </div>
+            <div id="onboarding-step-2" class="hidden">
+                <h2>Great! Now, let's add your first service.</h2>
+                <p>This is what your customers will order.</p>
+                 <div class="form-group">
+                    <label for="onboarding-service-name">Service/Product Name</label>
+                    <input type="text" id="onboarding-service-name" placeholder="e.g., Chocolate Fudge Cake">
+                </div>
+                 <div class="form-group">
+                    <label for="onboarding-service-price">Price ($)</label>
+                    <input type="number" id="onboarding-service-price" placeholder="e.g., 25">
+                </div>
+                <button id="onboarding-finish-btn" class="btn btn-primary full-width">Create My Page!</button>
+            </div>
+        </div>
+    </div>
+
+
     <div class="app-layout">
-        <!-- Main App Header -->
         <header class="app-header">
             <a href="app.html" class="logo">Quicksy</a>
             <div class="user-menu">
@@ -23,68 +51,61 @@
             </div>
         </header>
 
-        <!-- Main Content -->
         <main class="app-main-content">
             <div id="app-dashboard">
-                <!-- Module: Welcome Message -->
                 <div class="welcome-banner">
                     <h1 id="welcome-message">Welcome back!</h1>
-                    <p>Here's everything you need to get started and grow your business.</p>
+                    <p>This is your growth hub. Let's make something amazing today.</p>
                 </div>
 
-                <!-- App Grid Layout -->
                 <div class="app-grid">
-                    <!-- Column 1: Core Actions & Pages -->
                     <div class="app-grid-main">
-                        <!-- Module: Quick Actions -->
                         <div class="module-card">
-                            <h3>Quick Actions</h3>
+                            <div class="module-header">
+                                <h3>Quick Actions</h3>
+                            </div>
                             <div class="quick-actions-container">
-                                <a href="#" class="action-box">
+                                <a href="editor.html" class="action-box">
                                     <div class="action-icon">🚀</div>
                                     <h4>Create New Page</h4>
                                     <p>Start a new order or booking page.</p>
                                 </a>
-                                <a href="#" class="action-box">
+                                <a href="#" class="action-box disabled">
                                     <div class="action-icon">📊</div>
                                     <h4>View Analytics</h4>
-                                    <p>Check your views and conversions.</p>
+                                    <p>Coming soon in Pro plan.</p>
                                 </a>
                             </div>
                         </div>
 
-                        <!-- Module: My Pages -->
                         <div class="module-card">
-                            <h3>My Pages</h3>
+                             <div class="module-header">
+                                <h3>My Pages</h3>
+                                <a href="editor.html" class="btn btn-secondary btn-sm">+ New</a>
+                            </div>
                             <div id="my-pages-list" class="list-container">
-                                <!-- Pages will be loaded here by JS -->
                                 <div class="loader">Loading your pages...</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Column 2: Sidebar / Secondary Info -->
                     <div class="app-grid-sidebar">
-                        <!-- Module: Communication Preferences -->
                         <div class="module-card">
-                            <h3>Communication</h3>
-                            <p class="module-subtitle">How can we best reach you with tips & updates?</p>
-                            <div class="comm-prefs">
-                                <button class="comm-btn" data-method="whatsapp">
-                                    <svg viewBox="0 0 24 24"><path fill="currentColor" d="..."></path></svg> WhatsApp
-                                </button>
-                                <button class="comm-btn active" data-method="email">
-                                     <svg viewBox="0 0 24 24"><path fill="currentColor" d="..."></path></svg> Email
-                                </button>
+                             <div class="module-header">
+                                <h3>Communication</h3>
                             </div>
-                            <p class="comm-note">We'll only send you stuff that helps you grow.</p>
+                            <p class="module-subtitle">How can we best reach you?</p>
+                            <div class="comm-prefs">
+                                <button class="comm-btn" data-method="whatsapp">WhatsApp</button>
+                                <button class="comm-btn active" data-method="email">Email</button>
+                            </div>
                         </div>
                         
-                        <!-- Module: Recent Orders -->
                         <div class="module-card">
-                            <h3>Recent Orders</h3>
+                             <div class="module-header">
+                                <h3>Recent Orders</h3>
+                            </div>
                             <div id="recent-orders-list" class="list-container">
-                                <!-- Orders will be loaded here by JS -->
                                 <div class="loader">Loading recent orders...</div>
                             </div>
                         </div>
