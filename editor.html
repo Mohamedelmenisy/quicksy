@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Editor - Quicksy</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,...">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="editor-body">
+    <div class="editor-layout">
+        <header class="editor-header">
+            <div>
+                <a href="app.html" class="btn btn-ghost">← Back to Workspace</a>
+                <input type="text" id="page-title-input" value="My New Page" class="page-title-input">
+            </div>
+            <div>
+                 <button id="save-page-btn" class="btn btn-primary">Save & Publish</button>
+            </div>
+        </header>
+        <main class="editor-main">
+            <div class="page-canvas">
+                <!-- This is where the user's page blocks will be rendered -->
+                <div class="block-placeholder">
+                    <h3>Your page is currently empty.</h3>
+                    <p>Click "Add Block" to start building.</p>
+                </div>
+            </div>
+            <aside class="editor-sidebar">
+                <h3>Add Blocks</h3>
+                <div class="blocks-library">
+                    <button class="block-btn" data-type="heading">Heading</button>
+                    <button class="block-btn" data-type="text">Text</button>
+                    <button class="block-btn" data-type="product">Product</button>
+                    <button class="block-btn" data-type="image">Image</button>
+                    <button class="block-btn disabled" data-type="video">Video (Pro)</button>
+                </div>
+            </aside>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
