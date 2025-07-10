@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quicksy - Your Smart Order Page</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="container">
+            <a href="#" class="logo">Quicksy</a>
+            <nav>
+                <a href="#pricing">Pricing</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+            <div class="auth-buttons">
+                <a href="#" class="btn btn-ghost">Login</a>
+                <a href="#" class="btn btn-primary">Sign Up</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Create your smart order page. <span class="gradient-text">In seconds.</span></h1>
+                <p>Quicksy empowers you to receive customer orders and bookings online through a single, elegant, and fast page, without any technical hassle.</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn btn-primary">🚀 Create Your Page for Free</a>
+                    <a href="#" class="btn btn-secondary">See a Live Demo</a>
+                </div>
+                <img src="https://i.imgur.com/zYf2b9W.png" alt="Phone Mockup" class="hero-mockup">
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <h2>How It Works</h2>
+                <div class="features-grid">
+                    <div class="card">
+                        <h3>1. Design Your Page</h3>
+                        <p>Easily add your logo, services, and prices.</p>
+                    </div>
+                    <div class="card">
+                        <h3>2. Share Your Link</h3>
+                        <p>Get a unique link and share it on WhatsApp, Instagram, anywhere.</p>
+                    </div>
+                    <div class="card">
+                        <h3>3. Receive Your Orders</h3>
+                        <p>Get instant notifications for new orders with all client details.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="demo" class="interactive-demo">
+            <div class="container">
+                <h2>Try the Live Interactive Demo</h2>
+                <div class="card demo-form-card">
+                    <h3>Request a Logo Design</h3>
+                    <form id="demo-form">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="whatsapp">WhatsApp Number</label>
+                            <input type="tel" id="whatsapp" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="package">Choose a Package</label>
+                            <select id="package" required>
+                                <option>Basic Package</option>
+                                <option>Pro Package</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary full-width">Order Now</button>
+                    </form>
+                    <div id="success-message" class="success-message hidden">
+                        <h4>Awesome!</h4>
+                        <p>This is how your customer gets their order confirmation. Ready to build your own page?</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- باقي الأقسام مثل التسعير والأسئلة الشائعة يمكن إضافتها بنفس الطريقة -->
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 Quicksy. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
